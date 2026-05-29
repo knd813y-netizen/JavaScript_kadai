@@ -1,0 +1,21 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 20px;
+    font-size: 26px;
+}
+
+#digitalClock_date {
+    margin-top: 45px;
+    color: blue;
+    font-size: 40px;
+}
+
+#digitalClock_time {
+    margin-top: 85px;
+    color: blue;
+    font-size: 84px;
+}
