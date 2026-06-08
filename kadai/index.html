@@ -1,12 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <title>山クイズ</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>登山クイズ</title>
+        <link rel="stylesheet" href="./css/style.css">
     </head>
 
     <body>
-        <h1>登山クイズ</h1>
+        <main class="app">
+            <section class="quiz-area">
+                <p class="label">Yama Quiz</p>
+                <h1>登山クイズ</h1>
+                <p id="statusMessage">問題データを読み込んでいます。</p>
+
+                <div id="quizBox" class="quiz-box hidden">
+                    <p id="categoryText" class="category"></p>
+                    <h2 id="questionText"></h2>
+                    <div id="choices" class="choices"></div>
+                    <p id="resultText" class="result"></p>
+                    <p id="explanationText" class="explanation"></p>
+                </div>
+            </section>
+        </main>
+
         <script src="./mountain_quiz.js"></script>
     </body>
 </html>
