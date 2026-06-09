@@ -20,12 +20,16 @@ const startButton = document.getElementById("startButton");
 const randomButton = document.getElementById("randomButton");
 const quizBox = document.getElementById("quizBox");
 const progressText = document.getElementById("progressText");
+const interruptButton = document.getElementById("interruptButton");
 const categoryText = document.getElementById("categoryText");
 const questionText = document.getElementById("questionText");
 const choices = document.getElementById("choices");
 const resultText = document.getElementById("resultText");
 const explanationText = document.getElementById("explanationText");
 const nextButton = document.getElementById("nextButton");
+const interruptBox = document.getElementById("interruptBox");
+const continueButton = document.getElementById("continueButton");
+const confirmInterruptButton = document.getElementById("confirmInterruptButton");
 const resultBox = document.getElementById("resultBox");
 const finalScoreText = document.getElementById("finalScoreText");
 const retryButton = document.getElementById("retryButton");
@@ -60,6 +64,7 @@ async function loadQuestions() {
 function showMenu() {
     menuBox.classList.remove("hidden");
     quizBox.classList.add("hidden");
+    interruptBox.classList.add("hidden");
     resultBox.classList.add("hidden");
     statusMessage.textContent = "出題条件を選んでクイズを開始してください。";
     validateSelections();
@@ -125,6 +130,7 @@ function startQuiz(settings) {
     lastQuizSettings = settings;
 
     menuBox.classList.add("hidden");
+    interruptBox.classList.add("hidden");
     resultBox.classList.add("hidden");
     quizBox.classList.remove("hidden");
 
@@ -217,6 +223,28 @@ nextButton.addEventListener("click", function() {
     } else {
         showResult();
     }
+});
+
+// 中断ボタンを押した時に確認画面を表示する
+interruptButton.addEventListener("click", function() {
+    quizBox.classList.add("hidden");
+    interruptBox.classList.remove("hidden");
+    statusMessage.textContent = "クイズの中断を確認しています。";
+});
+
+// クイズを続けるボタンを押した時に回答画面へ戻る
+continueButton.addEventListener("click", function() {
+    interruptBox.classList.add("hidden");
+    quizBox.classList.remove("hidden");
+    statusMessage.textContent = "クイズを続けます。";
+});
+
+// 中断を確定した時に進行状況を破棄してメニューへ戻る
+confirmInterruptButton.addEventListener("click", function() {
+    quizData = [];
+    currentQuestionIndex = 0;
+    score = 0;
+    showMenu();
 });
 
 // 全問題終了後に結果画面を表示する
