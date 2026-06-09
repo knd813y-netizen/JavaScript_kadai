@@ -34,8 +34,7 @@ const menuButton = document.getElementById("menuButton");
 // JSONファイルを読み込み、読み込みが終わったらメニューを表示する
 async function loadQuestions() {
     try {
-        // AJAX
-        // awaitで読み込みが完了するまで待つ
+        // AJAX。awaitで読み込みが完了するまで待つ
         const response = await fetch("./data/questions.json");
 
         // response.okがfalseの場合、エラーを投げる
@@ -43,7 +42,6 @@ async function loadQuestions() {
             throw new Error("問題データを読み込めませんでした。");
         }
 
-        // JSONファイルで読み込んだ問題をallQuestionsに代入
         allQuestions = await response.json();
 
         // 問題が1問もない場合はエラーを投げる
@@ -51,14 +49,9 @@ async function loadQuestions() {
             throw new Error("問題データがありません。");
         }
 
-        // 問題の読み込み後にメニュー画面を表示する
         showMenu();
-
-    // 例外処理
     } catch (error) {
-        // 画面にエラーメッセージを表示
         statusMessage.textContent = "問題データの読み込みに失敗しました。";
-        // コンソールにエラーメッセージを表示
         console.error(error);
     }
 }
@@ -115,7 +108,6 @@ function startQuiz(settings) {
         });
     }
 
-    // 条件に一致する問題がない場合はメニューに案内を表示する
     if (filteredQuestions.length === 0) {
         menuMessage.textContent = "選択した条件に一致する問題がありません。";
         return;
@@ -127,7 +119,6 @@ function startQuiz(settings) {
         : Number(settings.questionCount);
     const actualQuestionCount = Math.min(requestedQuestionCount, shuffledQuestions.length);
 
-    // ランダムに並べた問題から、実際に出題する問題数だけ取り出す
     quizData = shuffledQuestions.slice(0, actualQuestionCount);
     currentQuestionIndex = 0;
     score = 0;
@@ -148,29 +139,28 @@ function startQuiz(settings) {
     showQuestion();
 }
 
+// 現在の問題数と正解数を表示する
+function updateProgress() {
+    progressText.textContent = (currentQuestionIndex + 1) + "問目 / 全" + quizData.length + "問 ｜ 正解 " + score + "問";
+}
+
 // 現在の問題を画面に表示する
 function showQuestion() {
-    // quizDataの[currentQuestionIndex]番の問題をセット
     const question = quizData[currentQuestionIndex];
 
-    // 現在の問題番号と全問題数を表示
-    progressText.textContent = (currentQuestionIndex + 1) + "問目 / 全" + quizData.length + "問";
-    // 問題のカテゴリとレベルの表示
+    // 現在の問題番号・全問題数・正解数を表示
+    updateProgress();
     categoryText.textContent = question.category + " / " + question.difficulty;
-    // 問題文の表示
     questionText.textContent = question.question;
     // 前の問題の選択肢・結果・解説が残らないように初期化する
     choices.innerHTML = "";
     resultText.textContent = "";
     explanationText.textContent = "";
-    // 回答するまでは次の問題ボタンを非表示にする
     nextButton.classList.add("hidden");
 
-    // JSONのchoicesの数だけ繰り返し
+    // JSONのchoicesの数だけ繰り返す
     question.choices.forEach(function(choice) {
-        // 選択肢ごとに新しいbutton要素を作成する
         const button = document.createElement("button");
-
         button.className = "choice-button";
         button.textContent = choice;
 
@@ -179,7 +169,6 @@ function showQuestion() {
             checkAnswer(choice, button);
         });
 
-        // choices要素の子要素としてbutton要素を追加する
         choices.appendChild(button);
     });
 }
@@ -207,16 +196,16 @@ function checkAnswer(selectedChoice, selectedButton) {
         resultText.textContent = "不正解です。";
     }
 
-    explanationText.textContent = question.explanation + " 現在の得点：" + score + "点";
+    // 回答直後の正解数に更新する
+    updateProgress();
+    explanationText.textContent = question.explanation;
 
-    // 最後の問題ではボタンの文字を「結果を見る」に変更する
     if (currentQuestionIndex === quizData.length - 1) {
         nextButton.textContent = "結果を見る";
     } else {
         nextButton.textContent = "次の問題へ";
     }
 
-    // 回答後に次の問題ボタンを表示する
     nextButton.classList.remove("hidden");
 }
 
