@@ -21,7 +21,7 @@ async function loadQuestions() {
         // awaitで読み込みが完了するまで待つ
         const response = await fetch("./data/questions.json");
 
-        // レスポンスがfalseならエラーを投げる
+        // response.okがfalseの場合、エラーを投げる
         if (!response.ok) {
             throw new Error("問題データを読み込めませんでした。");
         }
@@ -53,9 +53,7 @@ function showQuestion() {
     categoryText.textContent = question.category + " / " + question.difficulty;
     // 問題文の表示
     questionText.textContent = question.question;
-    // 選択肢と結果、解説は毎回リセットするので空文字を入れる
-    // これがないと1問目から答えたときに、
-    // 全ての問題が表示されていくことになる
+    // 前の問題の選択肢・結果・解説が残らないように初期化する
     choices.innerHTML = "";
     resultText.textContent = "";
     explanationText.textContent = "";
@@ -63,51 +61,49 @@ function showQuestion() {
     // JSONのchoicesの数だけ繰り返し
     // JSONのchoicesの中身をchoiceという変数で処理
     question.choices.forEach(function(choice) {
-        // "button"要素をHTMLに新しく作る
-        // それをbuttonという変数に代入
-        // constを使って繰り返しで毎回新しくする
+        // createElementで、選択肢ごとに新しいbutton要素を作成する
+        // buttonには再代入しないためconstを使用する
         const button = document.createElement("button");
 
         // button要素にクラスの名前を付ける
         button.className = "choice-button";
-        // button要素の中に問題文のテキストを埋め込む
+        // button要素に選択肢のテキストを設定する
         button.textContent = choice;
 
         // 無名関数を使って、クリックされた選択肢を判定する
         button.addEventListener("click", function() {
-            // checkAnsewrの実行
-            // 引数で問題文とbuttonの要素を渡す
+            // checkAnswerを実行する
+            // 引数として、選択肢の文字とbutton要素を渡す
             checkAnswer(choice, button);
         });
 
-        // HTMLから取得した"choices"要素にappendChildでbuttonの中身を追加する
+        // choices要素の子要素としてbutton要素を追加する
         choices.appendChild(button);
     });
 }
 
 // 選んだ答えが正解かどうかを判定する
-// selectedChoiceに選択した問題文
-// selectedButtonに選択したボタンの要素を渡している
+// selectedChoiceには選択した答えの文字が渡される
+// selectedButtonには選択したボタンの要素が渡される
 function checkAnswer(selectedChoice, selectedButton) {
-    // questionにJSONの中身を入れる
+    // questionに現在表示している問題のデータを入れる
     const question = quizData[currentQuestionIndex];
-    // choice-buttonのクラスの要素をすべてとる
+    // choice-buttonクラスの要素をすべて取得する
     const buttons = document.querySelectorAll(".choice-button");
-    console.log(buttons);
 
     // buttonsの中身をbuttonに繰り返し入れる
     buttons.forEach(function(button) {
         // 回答後に全ボタンを押せなくする
         button.disabled = true;
 
-        // 正解のbuttonにcorrect要素を追加して枠を緑にする
-        // 不正解でも正解がわかるようにしてる
+        // 正解のbuttonにcorrectクラスを追加して、正解用の色にする
+        // 不正解でも正解がわかるようにしている
         if (button.textContent === question.answer) {
             button.classList.add("correct");
         }
     });
 
-    // 回答者が選んだものとJSONのanswerが一致してるかどうか判定
+    // 回答者が選んだものとJSONのanswerが一致しているかどうか判定
     // 正解の場合
     if (selectedChoice === question.answer) {
         // インクリメントでスコアを1追加する
@@ -116,7 +112,6 @@ function checkAnswer(selectedChoice, selectedButton) {
         resultText.textContent = "正解です！";
     } else {
         // 不正解の場合
-        // 
         selectedButton.classList.add("incorrect");
         resultText.textContent = "不正解です。";
     }
