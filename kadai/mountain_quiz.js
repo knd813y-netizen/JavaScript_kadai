@@ -1,7 +1,11 @@
+// JSONから読み込んだ問題を入れる配列
 let quizData = [];
+// 表示している問題の番号 配列なので初期値は0
 let currentQuestionIndex = 0;
+// スコアの変数
 let score = 0;
 
+// indexからidの要素を取得し変数に入れ込む
 const statusMessage = document.getElementById("statusMessage");
 const quizBox = document.getElementById("quizBox");
 const categoryText = document.getElementById("categoryText");
@@ -13,68 +17,111 @@ const explanationText = document.getElementById("explanationText");
 // JSONファイルを読み込み、読み込みが終わったらクイズを表示する
 async function loadQuestions() {
     try {
+        // AJAX
+        // awaitで読み込みが完了するまで待つ
         const response = await fetch("./data/questions.json");
 
+        // レスポンスがfalseならエラーを投げる
         if (!response.ok) {
             throw new Error("問題データを読み込めませんでした。");
         }
 
+        // JSONファイルで読み込んだものをquizDataに代入
         quizData = await response.json();
+        // 問題を表示する関数の実行
         showQuestion();
+
+    // 例外処理
     } catch (error) {
+        // 画面にエラーメッセージを表示
         statusMessage.textContent = "問題データの読み込みに失敗しました。";
+        // コンソールにエラーメッセージを表示
         console.error(error);
     }
 }
 
 // 現在の問題を画面に表示する
 function showQuestion() {
+    // quizDataの[currentQuestionIndex]番の問題をセット
     const question = quizData[currentQuestionIndex];
 
+    // 問題表示後に回答の案内をするメッセージ
     statusMessage.textContent = "答えを1つ選んでください。";
+    // removeでhiddenを外して問題を表示
     quizBox.classList.remove("hidden");
+    // 問題のカテゴリとレベルの表示
     categoryText.textContent = question.category + " / " + question.difficulty;
+    // 問題文の表示
     questionText.textContent = question.question;
+    // 選択肢と結果、解説は毎回リセットするので空文字を入れる
+    // これがないと1問目から答えたときに、
+    // 全ての問題が表示されていくことになる
     choices.innerHTML = "";
     resultText.textContent = "";
     explanationText.textContent = "";
 
+    // JSONのchoicesの数だけ繰り返し
+    // JSONのchoicesの中身をchoiceという変数で処理
     question.choices.forEach(function(choice) {
+        // "button"要素をHTMLに新しく作る
+        // それをbuttonという変数に代入
+        // constを使って繰り返しで毎回新しくする
         const button = document.createElement("button");
 
+        // button要素にクラスの名前を付ける
         button.className = "choice-button";
+        // button要素の中に問題文のテキストを埋め込む
         button.textContent = choice;
 
         // 無名関数を使って、クリックされた選択肢を判定する
         button.addEventListener("click", function() {
+            // checkAnsewrの実行
+            // 引数で問題文とbuttonの要素を渡す
             checkAnswer(choice, button);
         });
 
+        // HTMLから取得した"choices"要素にappendChildでbuttonの中身を追加する
         choices.appendChild(button);
     });
 }
 
 // 選んだ答えが正解かどうかを判定する
+// selectedChoiceに選択した問題文
+// selectedButtonに選択したボタンの要素を渡している
 function checkAnswer(selectedChoice, selectedButton) {
+    // questionにJSONの中身を入れる
     const question = quizData[currentQuestionIndex];
+    // choice-buttonのクラスの要素をすべてとる
     const buttons = document.querySelectorAll(".choice-button");
+    console.log(buttons);
 
+    // buttonsの中身をbuttonに繰り返し入れる
     buttons.forEach(function(button) {
+        // 回答後に全ボタンを押せなくする
         button.disabled = true;
 
+        // 正解のbuttonにcorrect要素を追加して枠を緑にする
+        // 不正解でも正解がわかるようにしてる
         if (button.textContent === question.answer) {
             button.classList.add("correct");
         }
     });
 
+    // 回答者が選んだものとJSONのanswerが一致してるかどうか判定
+    // 正解の場合
     if (selectedChoice === question.answer) {
+        // インクリメントでスコアを1追加する
         score++;
+        // 結果の表示
         resultText.textContent = "正解です！";
     } else {
+        // 不正解の場合
+        // 
         selectedButton.classList.add("incorrect");
         resultText.textContent = "不正解です。";
     }
 
+    // 解説と得点の表示
     explanationText.textContent = question.explanation + " 現在の得点：" + score + "点";
 }
 

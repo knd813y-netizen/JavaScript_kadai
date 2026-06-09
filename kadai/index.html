@@ -2,23 +2,39 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
+        <!-- viewportでスマホ画面崩れを防止している -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>登山クイズ</title>
         <link rel="stylesheet" href="./css/style.css">
     </head>
 
     <body>
+        <!-- クイズのメインページ -->
+        <!-- もしサイドバーなどを付ける場合は追加でできるように -->
         <main class="app">
+
+            <!-- クイズのエリア -->
             <section class="quiz-area">
                 <p class="label">Yama Quiz</p>
                 <h1>登山クイズ</h1>
+
+                <!-- 最初の表示文字は「問題データを読み込んでいます」 -->
+                <!-- 以降はjsonを読み込んだらメッセージを変更 -->
                 <p id="statusMessage">問題データを読み込んでいます。</p>
 
+                <!-- クイズの全体 -->
+                <!-- JSON読み込み前に問題欄を表示すると変なので、-->
+                <!-- hiddenで最初は非表示にしてる -->
                 <div id="quizBox" class="quiz-box hidden">
+                    <!-- 問題のジャンルとレベルの表示 -->
                     <p id="categoryText" class="category"></p>
+                    <!-- 問題文の表示 -->
                     <h2 id="questionText"></h2>
+                    <!-- 選択肢の表示 -->
                     <div id="choices" class="choices"></div>
+                    <!-- 結果の表示 -->
                     <p id="resultText" class="result"></p>
+                    <!-- 解説を表示 -->
                     <p id="explanationText" class="explanation"></p>
                 </div>
             </section>
