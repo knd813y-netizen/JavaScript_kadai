@@ -85,6 +85,14 @@
                 <div id="resultBox" class="result-box hidden">
                     <h2>クイズ結果</h2>
                     <p id="finalScoreText" class="final-score"></p>
+                    <p id="recommendationText" class="recommendation-text"></p>
+
+                    <!-- おすすめの山を左へ流し続ける表示エリア -->
+                    <div class="mountain-slider" aria-label="おすすめの山">
+                        <div id="mountainTrack" class="mountain-track"></div>
+                    </div>
+                    <p class="mountain-notice">表示はクイズ結果をもとにした参考です。実際の登山では、季節・ルート・体力・経験を確認してください。</p>
+
                     <div class="menu-actions">
                         <button id="retryButton" class="primary-button" type="button">同じ条件でもう一度</button>
                         <button id="menuButton" class="secondary-button" type="button">メニューに戻る</button>
