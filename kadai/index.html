@@ -9,44 +9,73 @@
     </head>
 
     <body>
-        <!-- クイズのメインページ -->
-        <!-- もしサイドバーなどを付ける場合は追加でできるように -->
         <main class="app">
-
-            <!-- クイズのエリア -->
             <section class="quiz-area">
                 <p class="label">Yama Quiz</p>
                 <h1>登山クイズ</h1>
-
-                <!-- 最初の表示文字は「問題データを読み込んでいます」 -->
-                <!-- 以降はjsonを読み込んだらメッセージを変更 -->
                 <p id="statusMessage">問題データを読み込んでいます。</p>
 
-                <!-- クイズの全体 -->
-                <!-- JSON読み込み前に問題欄を表示すると変なので、-->
-                <!-- hiddenで最初は非表示にしてる -->
+                <!-- カテゴリ・難易度・出題数を選択するメニュー画面 -->
+                <div id="menuBox" class="menu-box hidden">
+                    <div class="setting-group">
+                        <label for="categorySelect">カテゴリ</label>
+                        <select id="categorySelect">
+                            <option value="">カテゴリを選択</option>
+                            <option value="all">すべて</option>
+                            <option value="装備">装備</option>
+                            <option value="山の知識">山の知識</option>
+                            <option value="登山マナー">登山マナー</option>
+                            <option value="危険回避・行動判断">危険回避・行動判断</option>
+                            <option value="豆知識編">豆知識編</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="difficultySelect">難易度</label>
+                        <select id="difficultySelect">
+                            <option value="">難易度を選択</option>
+                            <option value="all">すべて</option>
+                            <option value="初級">初級</option>
+                            <option value="中級">中級</option>
+                            <option value="上級">上級</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label for="questionCountSelect">出題数</label>
+                        <select id="questionCountSelect">
+                            <option value="5">5問</option>
+                            <option value="10">10問</option>
+                            <option value="all">条件に合う全問</option>
+                        </select>
+                    </div>
+
+                    <p id="menuMessage" class="menu-message">カテゴリと難易度を選択してください。</p>
+                    <div class="menu-actions">
+                        <button id="startButton" class="primary-button" type="button" disabled>選択した条件で開始</button>
+                        <button id="randomButton" class="secondary-button" type="button">完全ランダムで開始</button>
+                    </div>
+                </div>
+
+                <!-- クイズ画面 -->
                 <div id="quizBox" class="quiz-box hidden">
-                    <!-- 現在の問題番号と全問題数を表示 -->
                     <p id="progressText" class="progress-text"></p>
-                    <!-- 問題のジャンルとレベルの表示 -->
                     <p id="categoryText" class="category"></p>
-                    <!-- 問題文の表示 -->
                     <h2 id="questionText"></h2>
-                    <!-- 選択肢の表示 -->
                     <div id="choices" class="choices"></div>
-                    <!-- 結果の表示 -->
                     <p id="resultText" class="result"></p>
-                    <!-- 解説を表示 -->
                     <p id="explanationText" class="explanation"></p>
-                    <!-- 回答後に次の問題へ進むボタンを表示 -->
-                    <button id="nextButton" class="next-button hidden" type="button">次の問題へ</button>
+                    <button id="nextButton" class="primary-button hidden" type="button">次の問題へ</button>
                 </div>
 
                 <!-- 全問題終了後に表示する結果画面 -->
                 <div id="resultBox" class="result-box hidden">
                     <h2>クイズ結果</h2>
                     <p id="finalScoreText" class="final-score"></p>
-                    <button id="retryButton" class="next-button" type="button">もう一度挑戦する</button>
+                    <div class="menu-actions">
+                        <button id="retryButton" class="primary-button" type="button">同じ条件でもう一度</button>
+                        <button id="menuButton" class="secondary-button" type="button">メニューに戻る</button>
+                    </div>
                 </div>
             </section>
         </main>
