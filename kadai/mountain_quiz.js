@@ -8,11 +8,16 @@ let score = 0;
 // indexからidの要素を取得し変数に入れ込む
 const statusMessage = document.getElementById("statusMessage");
 const quizBox = document.getElementById("quizBox");
+const progressText = document.getElementById("progressText");
 const categoryText = document.getElementById("categoryText");
 const questionText = document.getElementById("questionText");
 const choices = document.getElementById("choices");
 const resultText = document.getElementById("resultText");
 const explanationText = document.getElementById("explanationText");
+const nextButton = document.getElementById("nextButton");
+const resultBox = document.getElementById("resultBox");
+const finalScoreText = document.getElementById("finalScoreText");
+const retryButton = document.getElementById("retryButton");
 
 // JSONファイルを読み込み、読み込みが終わったらクイズを表示する
 async function loadQuestions() {
@@ -49,6 +54,8 @@ function showQuestion() {
     statusMessage.textContent = "答えを1つ選んでください。";
     // removeでhiddenを外して問題を表示
     quizBox.classList.remove("hidden");
+    // 現在の問題番号と全問題数を表示
+    progressText.textContent = (currentQuestionIndex + 1) + "問目 / 全" + quizData.length + "問";
     // 問題のカテゴリとレベルの表示
     categoryText.textContent = question.category + " / " + question.difficulty;
     // 問題文の表示
@@ -57,6 +64,8 @@ function showQuestion() {
     choices.innerHTML = "";
     resultText.textContent = "";
     explanationText.textContent = "";
+    // 回答するまでは次の問題ボタンを非表示にする
+    nextButton.classList.add("hidden");
 
     // JSONのchoicesの数だけ繰り返し
     // JSONのchoicesの中身をchoiceという変数で処理
@@ -118,6 +127,45 @@ function checkAnswer(selectedChoice, selectedButton) {
 
     // 解説と得点の表示
     explanationText.textContent = question.explanation + " 現在の得点：" + score + "点";
+
+    // 最後の問題ではボタンの文字を「結果を見る」に変更する
+    if (currentQuestionIndex === quizData.length - 1) {
+        nextButton.textContent = "結果を見る";
+    } else {
+        nextButton.textContent = "次の問題へ";
+    }
+
+    // 回答後に次の問題ボタンを表示する
+    nextButton.classList.remove("hidden");
 }
+
+// 次の問題ボタンを押した時の処理
+nextButton.addEventListener("click", function() {
+    // 次の問題が残っている場合は、問題番号を増やして表示する
+    if (currentQuestionIndex < quizData.length - 1) {
+        currentQuestionIndex++;
+        showQuestion();
+    } else {
+        // 最後の問題が終わった場合は結果画面を表示する
+        showResult();
+    }
+});
+
+// 全問題終了後に結果画面を表示する
+function showResult() {
+    statusMessage.textContent = "全問終了です。おつかれさまでした！";
+    quizBox.classList.add("hidden");
+    resultBox.classList.remove("hidden");
+    finalScoreText.textContent = quizData.length + "問中 " + score + "問正解！";
+}
+
+// もう一度挑戦するボタンを押した時の処理
+retryButton.addEventListener("click", function() {
+    // 問題番号とスコアを初期値に戻す
+    currentQuestionIndex = 0;
+    score = 0;
+    resultBox.classList.add("hidden");
+    showQuestion();
+});
 
 loadQuestions();
