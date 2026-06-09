@@ -1,12 +1,23 @@
-// JSONから読み込んだ問題を入れる配列
+// JSONから読み込んだすべての問題を入れる配列
+let allQuestions = [];
+// 選択された条件に合わせて出題する問題を入れる配列
 let quizData = [];
 // 表示している問題の番号 配列なので初期値は0
 let currentQuestionIndex = 0;
 // スコアの変数
 let score = 0;
+// 再挑戦する時に使用する、前回の出題条件
+let lastQuizSettings = null;
 
 // indexからidの要素を取得し変数に入れ込む
 const statusMessage = document.getElementById("statusMessage");
+const menuBox = document.getElementById("menuBox");
+const categorySelect = document.getElementById("categorySelect");
+const difficultySelect = document.getElementById("difficultySelect");
+const questionCountSelect = document.getElementById("questionCountSelect");
+const menuMessage = document.getElementById("menuMessage");
+const startButton = document.getElementById("startButton");
+const randomButton = document.getElementById("randomButton");
 const quizBox = document.getElementById("quizBox");
 const progressText = document.getElementById("progressText");
 const categoryText = document.getElementById("categoryText");
@@ -18,8 +29,9 @@ const nextButton = document.getElementById("nextButton");
 const resultBox = document.getElementById("resultBox");
 const finalScoreText = document.getElementById("finalScoreText");
 const retryButton = document.getElementById("retryButton");
+const menuButton = document.getElementById("menuButton");
 
-// JSONファイルを読み込み、読み込みが終わったらクイズを表示する
+// JSONファイルを読み込み、読み込みが終わったらメニューを表示する
 async function loadQuestions() {
     try {
         // AJAX
@@ -31,10 +43,16 @@ async function loadQuestions() {
             throw new Error("問題データを読み込めませんでした。");
         }
 
-        // JSONファイルで読み込んだものをquizDataに代入
-        quizData = await response.json();
-        // 問題を表示する関数の実行
-        showQuestion();
+        // JSONファイルで読み込んだ問題をallQuestionsに代入
+        allQuestions = await response.json();
+
+        // 問題が1問もない場合はエラーを投げる
+        if (allQuestions.length === 0) {
+            throw new Error("問題データがありません。");
+        }
+
+        // 問題の読み込み後にメニュー画面を表示する
+        showMenu();
 
     // 例外処理
     } catch (error) {
@@ -45,15 +63,96 @@ async function loadQuestions() {
     }
 }
 
+// メニュー画面を表示する
+function showMenu() {
+    menuBox.classList.remove("hidden");
+    quizBox.classList.add("hidden");
+    resultBox.classList.add("hidden");
+    statusMessage.textContent = "出題条件を選んでクイズを開始してください。";
+    validateSelections();
+}
+
+// カテゴリと難易度が両方選択されているか確認する
+function validateSelections() {
+    const categoryIsSelected = categorySelect.value !== "";
+    const difficultyIsSelected = difficultySelect.value !== "";
+
+    // 両方選択されるまで通常開始ボタンを押せないようにする
+    startButton.disabled = !(categoryIsSelected && difficultyIsSelected);
+
+    if (categoryIsSelected && difficultyIsSelected) {
+        menuMessage.textContent = "選択した条件で開始できます。";
+    } else {
+        menuMessage.textContent = "カテゴリと難易度を選択してください。";
+    }
+}
+
+// 配列の問題順をランダムに並べ替えた新しい配列を返す
+function shuffleQuestions(questions) {
+    const shuffledQuestions = questions.slice();
+
+    for (let index = shuffledQuestions.length - 1; index > 0; index--) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        const temporaryQuestion = shuffledQuestions[index];
+        shuffledQuestions[index] = shuffledQuestions[randomIndex];
+        shuffledQuestions[randomIndex] = temporaryQuestion;
+    }
+
+    return shuffledQuestions;
+}
+
+// 指定された条件から出題する問題を決定してクイズを開始する
+function startQuiz(settings) {
+    let filteredQuestions = allQuestions;
+
+    // 完全ランダムではない場合、カテゴリと難易度で問題を絞り込む
+    if (!settings.randomMode) {
+        filteredQuestions = allQuestions.filter(function(question) {
+            const categoryMatches = settings.category === "all" || question.category === settings.category;
+            const difficultyMatches = settings.difficulty === "all" || question.difficulty === settings.difficulty;
+
+            return categoryMatches && difficultyMatches;
+        });
+    }
+
+    // 条件に一致する問題がない場合はメニューに案内を表示する
+    if (filteredQuestions.length === 0) {
+        menuMessage.textContent = "選択した条件に一致する問題がありません。";
+        return;
+    }
+
+    const shuffledQuestions = shuffleQuestions(filteredQuestions);
+    const requestedQuestionCount = settings.questionCount === "all"
+        ? shuffledQuestions.length
+        : Number(settings.questionCount);
+    const actualQuestionCount = Math.min(requestedQuestionCount, shuffledQuestions.length);
+
+    // ランダムに並べた問題から、実際に出題する問題数だけ取り出す
+    quizData = shuffledQuestions.slice(0, actualQuestionCount);
+    currentQuestionIndex = 0;
+    score = 0;
+    lastQuizSettings = settings;
+
+    menuBox.classList.add("hidden");
+    resultBox.classList.add("hidden");
+    quizBox.classList.remove("hidden");
+
+    if (requestedQuestionCount > filteredQuestions.length) {
+        statusMessage.textContent = "条件に一致する問題が" + filteredQuestions.length + "問のため、全て出題します。";
+    } else if (settings.randomMode) {
+        statusMessage.textContent = "全カテゴリ・全難易度からランダムに出題します。";
+    } else {
+        statusMessage.textContent = "選択した条件からランダムに出題します。";
+    }
+
+    showQuestion();
+}
+
 // 現在の問題を画面に表示する
 function showQuestion() {
     // quizDataの[currentQuestionIndex]番の問題をセット
     const question = quizData[currentQuestionIndex];
 
-    // 問題表示後に回答の案内をするメッセージ
-    statusMessage.textContent = "答えを1つ選んでください。";
-    // removeでhiddenを外して問題を表示
-    quizBox.classList.remove("hidden");
     // 現在の問題番号と全問題数を表示
     progressText.textContent = (currentQuestionIndex + 1) + "問目 / 全" + quizData.length + "問";
     // 問題のカテゴリとレベルの表示
@@ -68,21 +167,15 @@ function showQuestion() {
     nextButton.classList.add("hidden");
 
     // JSONのchoicesの数だけ繰り返し
-    // JSONのchoicesの中身をchoiceという変数で処理
     question.choices.forEach(function(choice) {
-        // createElementで、選択肢ごとに新しいbutton要素を作成する
-        // buttonには再代入しないためconstを使用する
+        // 選択肢ごとに新しいbutton要素を作成する
         const button = document.createElement("button");
 
-        // button要素にクラスの名前を付ける
         button.className = "choice-button";
-        // button要素に選択肢のテキストを設定する
         button.textContent = choice;
 
         // 無名関数を使って、クリックされた選択肢を判定する
         button.addEventListener("click", function() {
-            // checkAnswerを実行する
-            // 引数として、選択肢の文字とbutton要素を渡す
             checkAnswer(choice, button);
         });
 
@@ -92,40 +185,28 @@ function showQuestion() {
 }
 
 // 選んだ答えが正解かどうかを判定する
-// selectedChoiceには選択した答えの文字が渡される
-// selectedButtonには選択したボタンの要素が渡される
 function checkAnswer(selectedChoice, selectedButton) {
-    // questionに現在表示している問題のデータを入れる
     const question = quizData[currentQuestionIndex];
-    // choice-buttonクラスの要素をすべて取得する
     const buttons = document.querySelectorAll(".choice-button");
 
-    // buttonsの中身をbuttonに繰り返し入れる
     buttons.forEach(function(button) {
         // 回答後に全ボタンを押せなくする
         button.disabled = true;
 
-        // 正解のbuttonにcorrectクラスを追加して、正解用の色にする
-        // 不正解でも正解がわかるようにしている
+        // 不正解でも正解がわかるよう、正解のボタンにcorrectクラスを追加する
         if (button.textContent === question.answer) {
             button.classList.add("correct");
         }
     });
 
-    // 回答者が選んだものとJSONのanswerが一致しているかどうか判定
-    // 正解の場合
     if (selectedChoice === question.answer) {
-        // インクリメントでスコアを1追加する
         score++;
-        // 結果の表示
         resultText.textContent = "正解です！";
     } else {
-        // 不正解の場合
         selectedButton.classList.add("incorrect");
         resultText.textContent = "不正解です。";
     }
 
-    // 解説と得点の表示
     explanationText.textContent = question.explanation + " 現在の得点：" + score + "点";
 
     // 最後の問題ではボタンの文字を「結果を見る」に変更する
@@ -141,12 +222,10 @@ function checkAnswer(selectedChoice, selectedButton) {
 
 // 次の問題ボタンを押した時の処理
 nextButton.addEventListener("click", function() {
-    // 次の問題が残っている場合は、問題番号を増やして表示する
     if (currentQuestionIndex < quizData.length - 1) {
         currentQuestionIndex++;
         showQuestion();
     } else {
-        // 最後の問題が終わった場合は結果画面を表示する
         showResult();
     }
 });
@@ -159,13 +238,43 @@ function showResult() {
     finalScoreText.textContent = quizData.length + "問中 " + score + "問正解！";
 }
 
-// もう一度挑戦するボタンを押した時の処理
+// カテゴリまたは難易度が変更された時に選択状態を確認する
+categorySelect.addEventListener("change", function() {
+    validateSelections();
+});
+
+difficultySelect.addEventListener("change", function() {
+    validateSelections();
+});
+
+// 選択した条件で開始するボタンを押した時の処理
+startButton.addEventListener("click", function() {
+    startQuiz({
+        category: categorySelect.value,
+        difficulty: difficultySelect.value,
+        questionCount: questionCountSelect.value,
+        randomMode: false
+    });
+});
+
+// 完全ランダムで開始するボタンを押した時の処理
+randomButton.addEventListener("click", function() {
+    startQuiz({
+        category: "all",
+        difficulty: "all",
+        questionCount: questionCountSelect.value,
+        randomMode: true
+    });
+});
+
+// 同じ条件でもう一度挑戦するボタンを押した時の処理
 retryButton.addEventListener("click", function() {
-    // 問題番号とスコアを初期値に戻す
-    currentQuestionIndex = 0;
-    score = 0;
-    resultBox.classList.add("hidden");
-    showQuestion();
+    startQuiz(lastQuizSettings);
+});
+
+// メニューに戻るボタンを押した時の処理
+menuButton.addEventListener("click", function() {
+    showMenu();
 });
 
 loadQuestions();
