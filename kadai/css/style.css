@@ -14,12 +14,13 @@ body {
 }
 
 .quiz-area {
-    width: min(720px, 100%);
+    width: min(920px, 100%);
     background: #ffffff;
     border: 1px solid #d8e2d9;
     border-radius: 8px;
     padding: 32px;
     box-shadow: 0 12px 28px rgba(35, 57, 42, 0.12);
+    overflow: hidden;
 }
 
 .label {
@@ -121,7 +122,8 @@ h2 {
     color: #a23f32;
 }
 
-.danger-button:hover {
+.danger-button:hover,
+.interrupt-button:hover {
     background: #fff2ef;
 }
 
@@ -149,10 +151,6 @@ h2 {
     color: #a23f32;
     font-size: 13px;
     cursor: pointer;
-}
-
-.interrupt-button:hover {
-    background: #fff2ef;
 }
 
 .category {
@@ -222,9 +220,85 @@ h2 {
 }
 
 .final-score {
-    margin: 12px 0 24px;
+    margin: 12px 0;
     font-size: 24px;
     font-weight: bold;
+}
+
+.recommendation-text {
+    margin: 0 0 18px;
+    color: #42634d;
+    font-weight: bold;
+}
+
+.mountain-slider {
+    width: 100%;
+    overflow: hidden;
+    padding: 8px 0 14px;
+}
+
+.mountain-track {
+    display: flex;
+    gap: 14px;
+    width: max-content;
+    animation: mountain-scroll 28s linear infinite;
+}
+
+.mountain-slider:hover .mountain-track {
+    animation-play-state: paused;
+}
+
+.mountain-card {
+    width: 240px;
+    min-height: 160px;
+    flex-shrink: 0;
+    padding: 18px;
+    border: 1px solid #cbd9cf;
+    border-top: 5px solid #4d8060;
+    border-radius: 7px;
+    background: #f8fbf9;
+    text-align: left;
+}
+
+.mountain-card h3 {
+    margin: 0 0 7px;
+    font-size: 20px;
+}
+
+.mountain-meta {
+    margin: 0 0 10px;
+    color: #54705d;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.mountain-description {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.mountain-notice {
+    margin: 0 0 22px;
+    color: #6b776f;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+@keyframes mountain-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(calc(-50% - 7px));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mountain-track {
+        animation: none;
+    }
 }
 
 @media (max-width: 600px) {
@@ -239,6 +313,10 @@ h2 {
     .quiz-toolbar {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .mountain-card {
+        width: 210px;
     }
 
     .menu-actions,
