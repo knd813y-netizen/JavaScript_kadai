@@ -26,6 +26,8 @@
                 <!-- JSON読み込み前に問題欄を表示すると変なので、-->
                 <!-- hiddenで最初は非表示にしてる -->
                 <div id="quizBox" class="quiz-box hidden">
+                    <!-- 現在の問題番号と全問題数を表示 -->
+                    <p id="progressText" class="progress-text"></p>
                     <!-- 問題のジャンルとレベルの表示 -->
                     <p id="categoryText" class="category"></p>
                     <!-- 問題文の表示 -->
@@ -36,6 +38,15 @@
                     <p id="resultText" class="result"></p>
                     <!-- 解説を表示 -->
                     <p id="explanationText" class="explanation"></p>
+                    <!-- 回答後に次の問題へ進むボタンを表示 -->
+                    <button id="nextButton" class="next-button hidden" type="button">次の問題へ</button>
+                </div>
+
+                <!-- 全問題終了後に表示する結果画面 -->
+                <div id="resultBox" class="result-box hidden">
+                    <h2>クイズ結果</h2>
+                    <p id="finalScoreText" class="final-score"></p>
+                    <button id="retryButton" class="next-button" type="button">もう一度挑戦する</button>
                 </div>
             </section>
         </main>
