@@ -8,6 +8,9 @@ let quizData = [];
 let currentQuestionIndex = 0;
 // スコアの変数
 let score = 0;
+// 難易度が混ざる場合のおすすめ判定に使う得点
+let weightedScore = 0;
+let weightedMaxScore = 0;
 // 再挑戦する時に使用する、前回の出題条件
 let lastQuizSettings = null;
 
@@ -108,6 +111,19 @@ function shuffleQuestions(questions) {
     return shuffledQuestions;
 }
 
+// 問題の難易度に応じた得点を返す
+function getDifficultyPoint(difficulty) {
+    if (difficulty === "初級") {
+        return 1;
+    }
+
+    if (difficulty === "中級") {
+        return 2;
+    }
+
+    return 3;
+}
+
 // 指定された条件から出題する問題を決定してクイズを開始する
 function startQuiz(settings) {
     let filteredQuestions = allQuestions;
@@ -136,7 +152,14 @@ function startQuiz(settings) {
     quizData = shuffledQuestions.slice(0, actualQuestionCount);
     currentQuestionIndex = 0;
     score = 0;
+    weightedScore = 0;
+    weightedMaxScore = 0;
     lastQuizSettings = settings;
+
+    // 出題される全問題の、難易度別得点の合計を計算する
+    quizData.forEach(function(question) {
+        weightedMaxScore += getDifficultyPoint(question.difficulty);
+    });
 
     menuBox.classList.add("hidden");
     interruptBox.classList.add("hidden");
@@ -201,6 +224,7 @@ function checkAnswer(selectedChoice, selectedButton) {
 
     if (selectedChoice === question.answer) {
         score++;
+        weightedScore += getDifficultyPoint(question.difficulty);
         resultText.textContent = "正解です！";
     } else {
         selectedButton.classList.add("incorrect");
@@ -248,36 +272,81 @@ confirmInterruptButton.addEventListener("click", function() {
     quizData = [];
     currentQuestionIndex = 0;
     score = 0;
+    weightedScore = 0;
+    weightedMaxScore = 0;
     showMenu();
 });
 
-// 難易度を「すべて」にした場合、正解数からおすすめの難易度を決める
+// 難易度が混ざる出題かどうかを確認する
+function usesWeightedScore() {
+    return lastQuizSettings.randomMode || lastQuizSettings.difficulty === "all";
+}
+
+// おすすめする山の難易度を決める
 function getRecommendationDifficulty() {
-    if (!lastQuizSettings.randomMode && lastQuizSettings.difficulty !== "all") {
+    if (!usesWeightedScore()) {
         return lastQuizSettings.difficulty;
     }
 
-    const correctRatio = score / quizData.length;
+    const weightedRatio = weightedScore / weightedMaxScore;
 
-    if (correctRatio < 0.5) {
+    if (weightedRatio < 0.6) {
         return "初級";
     }
 
-    if (correctRatio < 0.8) {
+    if (weightedRatio < 0.9) {
         return "中級";
     }
 
     return "上級";
 }
 
-// 正解数が半分以上か半分未満かを決める。ちょうど半分は半分以上に含める
+// おすすめする山のグループを決める
 function getScoreGroup() {
-    if (score >= quizData.length / 2) {
+    // 難易度を指定した場合は、通常の正解数で判定する
+    if (!usesWeightedScore()) {
+        if (score >= quizData.length / 2) {
+            return "半分以上";
+        }
+
+        return "半分未満";
+    }
+
+    // 難易度が混ざる場合は、難易度別得点の割合を6段階に分ける
+    const weightedRatio = weightedScore / weightedMaxScore;
+
+    if (weightedRatio < 0.4) {
+        return "半分未満";
+    }
+
+    if (weightedRatio < 0.6) {
         return "半分以上";
     }
 
-    return "半分未満";
+    if (weightedRatio < 0.75) {
+        return "半分未満";
+    }
+
+    if (weightedRatio < 0.9) {
+        return "半分以上";
+    }
+
+    if (weightedRatio < 1) {
+        return "半分未満";
+    }
+
+    return "半分以上";
 }
+
+/*
+難易度が混ざる場合のおすすめ判定
+  0%～39%  : 初級・半分未満
+ 40%～59%  : 初級・半分以上
+ 60%～74%  : 中級・半分未満
+ 75%～89%  : 中級・半分以上
+ 90%～99%  : 上級・半分未満
+100%       : 上級・半分以上
+*/
 
 // おすすめの山カードを作成する
 function createMountainCard(mountain) {
@@ -309,6 +378,10 @@ function showRecommendedMountains() {
     });
 
     recommendationText.textContent = recommendationDifficulty + "・" + scoreGroup + "のあなたにおすすめの山";
+
+    if (usesWeightedScore()) {
+        recommendationText.textContent += "（難易度別得点 " + weightedScore + " / " + weightedMaxScore + "点で判定）";
+    }
     mountainTrack.innerHTML = "";
 
     // 同じ山カードを2周分追加し、途切れないスクロールにする
