@@ -1,5 +1,7 @@
 // JSONから読み込んだすべての問題を入れる配列
 let allQuestions = [];
+// JSONから読み込んだおすすめの山を入れる配列
+let allMountains = [];
 // 選択された条件に合わせて出題する問題を入れる配列
 let quizData = [];
 // 表示している問題の番号 配列なので初期値は0
@@ -32,30 +34,38 @@ const continueButton = document.getElementById("continueButton");
 const confirmInterruptButton = document.getElementById("confirmInterruptButton");
 const resultBox = document.getElementById("resultBox");
 const finalScoreText = document.getElementById("finalScoreText");
+const recommendationText = document.getElementById("recommendationText");
+const mountainTrack = document.getElementById("mountainTrack");
 const retryButton = document.getElementById("retryButton");
 const menuButton = document.getElementById("menuButton");
 
-// JSONファイルを読み込み、読み込みが終わったらメニューを表示する
-async function loadQuestions() {
+// 問題データとおすすめの山データを読み込み、メニューを表示する
+async function loadData() {
     try {
-        // AJAX。awaitで読み込みが完了するまで待つ
-        const response = await fetch("./data/questions.json");
+        // 2つのJSONファイルを同時に読み込む
+        const responses = await Promise.all([
+            fetch("./data/questions.json"),
+            fetch("./data/mountains.json")
+        ]);
+        const questionResponse = responses[0];
+        const mountainResponse = responses[1];
 
-        // response.okがfalseの場合、エラーを投げる
-        if (!response.ok) {
-            throw new Error("問題データを読み込めませんでした。");
+        // どちらかの読み込みに失敗した場合はエラーを投げる
+        if (!questionResponse.ok || !mountainResponse.ok) {
+            throw new Error("アプリで使用するデータを読み込めませんでした。");
         }
 
-        allQuestions = await response.json();
+        allQuestions = await questionResponse.json();
+        allMountains = await mountainResponse.json();
 
-        // 問題が1問もない場合はエラーを投げる
-        if (allQuestions.length === 0) {
-            throw new Error("問題データがありません。");
+        // 必要なデータがない場合はエラーを投げる
+        if (allQuestions.length === 0 || allMountains.length === 0) {
+            throw new Error("アプリで使用するデータがありません。");
         }
 
         showMenu();
     } catch (error) {
-        statusMessage.textContent = "問題データの読み込みに失敗しました。";
+        statusMessage.textContent = "データの読み込みに失敗しました。";
         console.error(error);
     }
 }
@@ -75,7 +85,6 @@ function validateSelections() {
     const categoryIsSelected = categorySelect.value !== "";
     const difficultyIsSelected = difficultySelect.value !== "";
 
-    // 両方選択されるまで通常開始ボタンを押せないようにする
     startButton.disabled = !(categoryIsSelected && difficultyIsSelected);
 
     if (categoryIsSelected && difficultyIsSelected) {
@@ -154,17 +163,14 @@ function updateProgress() {
 function showQuestion() {
     const question = quizData[currentQuestionIndex];
 
-    // 現在の問題番号・全問題数・正解数を表示
     updateProgress();
     categoryText.textContent = question.category + " / " + question.difficulty;
     questionText.textContent = question.question;
-    // 前の問題の選択肢・結果・解説が残らないように初期化する
     choices.innerHTML = "";
     resultText.textContent = "";
     explanationText.textContent = "";
     nextButton.classList.add("hidden");
 
-    // JSONのchoicesの数だけ繰り返す
     question.choices.forEach(function(choice) {
         const button = document.createElement("button");
         button.className = "choice-button";
@@ -185,7 +191,6 @@ function checkAnswer(selectedChoice, selectedButton) {
     const buttons = document.querySelectorAll(".choice-button");
 
     buttons.forEach(function(button) {
-        // 回答後に全ボタンを押せなくする
         button.disabled = true;
 
         // 不正解でも正解がわかるよう、正解のボタンにcorrectクラスを追加する
@@ -202,7 +207,6 @@ function checkAnswer(selectedChoice, selectedButton) {
         resultText.textContent = "不正解です。";
     }
 
-    // 回答直後の正解数に更新する
     updateProgress();
     explanationText.textContent = question.explanation;
 
@@ -247,12 +251,79 @@ confirmInterruptButton.addEventListener("click", function() {
     showMenu();
 });
 
+// 難易度を「すべて」にした場合、正解数からおすすめの難易度を決める
+function getRecommendationDifficulty() {
+    if (!lastQuizSettings.randomMode && lastQuizSettings.difficulty !== "all") {
+        return lastQuizSettings.difficulty;
+    }
+
+    const correctRatio = score / quizData.length;
+
+    if (correctRatio < 0.5) {
+        return "初級";
+    }
+
+    if (correctRatio < 0.8) {
+        return "中級";
+    }
+
+    return "上級";
+}
+
+// 正解数が半分以上か半分未満かを決める。ちょうど半分は半分以上に含める
+function getScoreGroup() {
+    if (score >= quizData.length / 2) {
+        return "半分以上";
+    }
+
+    return "半分未満";
+}
+
+// おすすめの山カードを作成する
+function createMountainCard(mountain) {
+    const card = document.createElement("article");
+    const name = document.createElement("h3");
+    const meta = document.createElement("p");
+    const description = document.createElement("p");
+
+    card.className = "mountain-card";
+    name.textContent = mountain.name;
+    meta.className = "mountain-meta";
+    meta.textContent = mountain.prefecture + " ｜ 標高 " + mountain.elevation + "m";
+    description.className = "mountain-description";
+    description.textContent = mountain.description;
+
+    card.appendChild(name);
+    card.appendChild(meta);
+    card.appendChild(description);
+
+    return card;
+}
+
+// 結果に合ったおすすめの山を表示する
+function showRecommendedMountains() {
+    const recommendationDifficulty = getRecommendationDifficulty();
+    const scoreGroup = getScoreGroup();
+    const recommendedMountains = allMountains.filter(function(mountain) {
+        return mountain.difficulty === recommendationDifficulty && mountain.scoreGroup === scoreGroup;
+    });
+
+    recommendationText.textContent = recommendationDifficulty + "・" + scoreGroup + "のあなたにおすすめの山";
+    mountainTrack.innerHTML = "";
+
+    // 同じ山カードを2周分追加し、途切れないスクロールにする
+    recommendedMountains.concat(recommendedMountains).forEach(function(mountain) {
+        mountainTrack.appendChild(createMountainCard(mountain));
+    });
+}
+
 // 全問題終了後に結果画面を表示する
 function showResult() {
     statusMessage.textContent = "全問終了です。おつかれさまでした！";
     quizBox.classList.add("hidden");
     resultBox.classList.remove("hidden");
     finalScoreText.textContent = quizData.length + "問中 " + score + "問正解！";
+    showRecommendedMountains();
 }
 
 // カテゴリまたは難易度が変更された時に選択状態を確認する
@@ -294,4 +365,4 @@ menuButton.addEventListener("click", function() {
     showMenu();
 });
 
-loadQuestions();
+loadData();
