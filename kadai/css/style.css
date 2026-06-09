@@ -81,7 +81,8 @@ h2 {
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.danger-button {
     padding: 12px 20px;
     border-radius: 6px;
     font-size: 16px;
@@ -114,11 +115,44 @@ h2 {
     background: #f3faf5;
 }
 
+.danger-button {
+    border: 1px solid #b85b4e;
+    background: #ffffff;
+    color: #a23f32;
+}
+
+.danger-button:hover {
+    background: #fff2ef;
+}
+
+.quiz-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
 .progress-text {
-    margin: 0 0 12px;
+    margin: 0;
     color: #607267;
     font-size: 14px;
     font-weight: bold;
+}
+
+.interrupt-button {
+    flex-shrink: 0;
+    padding: 7px 10px;
+    border: 1px solid #b85b4e;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #a23f32;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.interrupt-button:hover {
+    background: #fff2ef;
 }
 
 .category {
@@ -176,11 +210,13 @@ h2 {
     line-height: 1.7;
 }
 
+.interrupt-box,
 .result-box {
     padding-top: 8px;
     text-align: center;
 }
 
+.interrupt-box .menu-actions,
 .result-box .menu-actions {
     justify-content: center;
 }
@@ -200,9 +236,15 @@ h2 {
         padding: 22px;
     }
 
+    .quiz-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
     .menu-actions,
     .primary-button,
-    .secondary-button {
+    .secondary-button,
+    .danger-button {
         width: 100%;
     }
 }
