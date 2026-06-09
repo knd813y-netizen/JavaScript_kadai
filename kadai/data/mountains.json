@@ -1,0 +1,31 @@
+[
+    {"name":"高尾山","prefecture":"東京都","area":"関東","difficulty":"初級","scoreGroup":"半分未満","elevation":599,"description":"登山道の選択肢が多く、山歩きを始めるきっかけに向いています。"},
+    {"name":"筑波山","prefecture":"茨城県","area":"関東","difficulty":"初級","scoreGroup":"半分未満","elevation":877,"description":"複数の登山コースがあり、山頂から関東平野を望めます。"},
+    {"name":"六甲山","prefecture":"兵庫県","area":"近畿","difficulty":"初級","scoreGroup":"半分未満","elevation":931,"description":"街からアクセスしやすく、多彩なコースを楽しめる山域です。"},
+    {"name":"一切経山","prefecture":"福島県","area":"東北","difficulty":"初級","scoreGroup":"半分未満","elevation":1949,"description":"火山らしい景観と五色沼の眺めが魅力です。"},
+
+    {"name":"大菩薩嶺","prefecture":"山梨県","area":"甲信越","difficulty":"初級","scoreGroup":"半分以上","elevation":2057,"description":"稜線からの展望を楽しみながら歩ける日本百名山です。"},
+    {"name":"剣山","prefecture":"徳島県","area":"四国","difficulty":"初級","scoreGroup":"半分以上","elevation":1955,"description":"広い山頂と笹原の稜線が特徴的な四国の名峰です。"},
+    {"name":"韓国岳","prefecture":"宮崎県・鹿児島県","area":"九州","difficulty":"初級","scoreGroup":"半分以上","elevation":1700,"description":"霧島連山の火山景観と山頂からの展望を楽しめます。"},
+    {"name":"安達太良山","prefecture":"福島県","area":"東北","difficulty":"初級","scoreGroup":"半分以上","elevation":1700,"description":"変化に富んだ火山景観が魅力の山です。"},
+
+    {"name":"由布岳","prefecture":"大分県","area":"九州","difficulty":"中級","scoreGroup":"半分未満","elevation":1583,"description":"双耳峰の美しい山容を持ち、山頂付近では慎重な行動が必要です。"},
+    {"name":"旭岳","prefecture":"北海道","area":"北海道","difficulty":"中級","scoreGroup":"半分未満","elevation":2291,"description":"北海道最高峰で、高山の天候変化への備えが欠かせません。"},
+    {"name":"塔ノ岳","prefecture":"神奈川県","area":"関東","difficulty":"中級","scoreGroup":"半分未満","elevation":1491,"description":"長い登りで体力を試しながら、山頂の展望を楽しめます。"},
+    {"name":"大山","prefecture":"鳥取県","area":"中国","difficulty":"中級","scoreGroup":"半分未満","elevation":1709,"description":"ブナ林と日本海の展望が魅力の中国地方を代表する山です。"},
+
+    {"name":"金峰山","prefecture":"山梨県・長野県","area":"甲信越","difficulty":"中級","scoreGroup":"半分以上","elevation":2599,"description":"奥秩父らしい森林と山頂の五丈岩が印象的です。"},
+    {"name":"富士山","prefecture":"山梨県・静岡県","area":"甲信越・東海","difficulty":"中級","scoreGroup":"半分以上","elevation":3776,"description":"高所への順応と十分な体力・装備が求められる日本最高峰です。"},
+    {"name":"鳥海山","prefecture":"山形県・秋田県","area":"東北","difficulty":"中級","scoreGroup":"半分以上","elevation":2236,"description":"長い行程と変化に富んだ地形を楽しめる独立峰です。"},
+    {"name":"石鎚山","prefecture":"愛媛県","area":"四国","difficulty":"中級","scoreGroup":"半分以上","elevation":1982,"description":"険しい山容を持ち、ルートに応じた慎重な判断が必要です。"},
+
+    {"name":"飯豊山","prefecture":"福島県・山形県・新潟県","area":"東北・甲信越","difficulty":"上級","scoreGroup":"半分未満","elevation":2105,"description":"長大な山域で、体力と綿密な登山計画が求められます。"},
+    {"name":"赤岳","prefecture":"山梨県・長野県","area":"甲信越","difficulty":"上級","scoreGroup":"半分未満","elevation":2899,"description":"八ヶ岳最高峰で、岩場を含むルートでは確かな技術が必要です。"},
+    {"name":"白山","prefecture":"石川県・岐阜県","area":"北陸・東海","difficulty":"上級","scoreGroup":"半分未満","elevation":2702,"description":"広大な山域と高山植物が魅力で、長い行程への準備が必要です。"},
+    {"name":"宮之浦岳","prefecture":"鹿児島県","area":"九州","difficulty":"上級","scoreGroup":"半分未満","elevation":1936,"description":"屋久島の深い自然を歩く、長時間行動への備えが必要な山です。"},
+
+    {"name":"奥穂高岳","prefecture":"長野県・岐阜県","area":"北アルプス","difficulty":"上級","scoreGroup":"半分以上","elevation":3190,"description":"岩稜帯を含み、高い技術・体力・判断力が求められます。"},
+    {"name":"北岳","prefecture":"山梨県","area":"南アルプス","difficulty":"上級","scoreGroup":"半分以上","elevation":3193,"description":"日本第二の高峰で、高所と長い行程への対応力が必要です。"},
+    {"name":"双六岳","prefecture":"長野県・岐阜県","area":"北アルプス","difficulty":"上級","scoreGroup":"半分以上","elevation":2860,"description":"北アルプス深部に位置し、長い行程を歩き切る総合力が必要です。"},
+    {"name":"利尻山","prefecture":"北海道","area":"北海道","difficulty":"上級","scoreGroup":"半分以上","elevation":1721,"description":"島の独立峰ならではの長い登りと急斜面に備える必要があります。"}
+]
