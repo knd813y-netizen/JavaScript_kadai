@@ -43,6 +43,13 @@ h2 {
     display: none;
 }
 
+.progress-text {
+    margin: 0 0 12px;
+    color: #607267;
+    font-size: 14px;
+    font-weight: bold;
+}
+
 .category {
     display: inline-block;
     margin: 0;
@@ -96,4 +103,31 @@ h2 {
 .explanation {
     margin: 0;
     line-height: 1.7;
+}
+
+.next-button {
+    margin-top: 24px;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 6px;
+    background: #2f7d4f;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.next-button:hover {
+    background: #25663f;
+}
+
+.result-box {
+    padding-top: 8px;
+    text-align: center;
+}
+
+.final-score {
+    margin: 12px 0;
+    font-size: 24px;
+    font-weight: bold;
 }
