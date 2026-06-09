@@ -59,13 +59,26 @@
 
                 <!-- クイズ画面 -->
                 <div id="quizBox" class="quiz-box hidden">
-                    <p id="progressText" class="progress-text"></p>
+                    <div class="quiz-toolbar">
+                        <p id="progressText" class="progress-text"></p>
+                        <button id="interruptButton" class="interrupt-button" type="button">中断してメニューへ</button>
+                    </div>
                     <p id="categoryText" class="category"></p>
                     <h2 id="questionText"></h2>
                     <div id="choices" class="choices"></div>
                     <p id="resultText" class="result"></p>
                     <p id="explanationText" class="explanation"></p>
                     <button id="nextButton" class="primary-button hidden" type="button">次の問題へ</button>
+                </div>
+
+                <!-- クイズ中断時の確認画面 -->
+                <div id="interruptBox" class="interrupt-box hidden">
+                    <h2>クイズを中断しますか？</h2>
+                    <p>現在の正解数と進行状況は保存されません。</p>
+                    <div class="menu-actions">
+                        <button id="continueButton" class="primary-button" type="button">クイズを続ける</button>
+                        <button id="confirmInterruptButton" class="danger-button" type="button">中断する</button>
+                    </div>
                 </div>
 
                 <!-- 全問題終了後に表示する結果画面 -->
