@@ -167,14 +167,18 @@ function getDifficultyPoint(difficulty) {
 
 // 指定された条件から出題する問題を決定してクイズを開始する
 function startQuiz(settings) {
+    // すべての問題を用意
     let filteredQuestions = allQuestions;
 
     // 完全ランダムではない場合、カテゴリと難易度で問題を絞り込む
     if (!settings.randomMode) {
+        // filterメソッドでallQuetionsに入ってる値をquestionに渡す
         filteredQuestions = allQuestions.filter(function(question) {
+            // 選択したカテゴリ、難易度が一致しているか判定
             const categoryMatches = settings.category === "all" || question.category === settings.category;
             const difficultyMatches = settings.difficulty === "all" || question.difficulty === settings.difficulty;
 
+            // 一致した値を返す
             return categoryMatches && difficultyMatches;
         });
     }
