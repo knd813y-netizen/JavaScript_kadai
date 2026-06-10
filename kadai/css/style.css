@@ -1,19 +1,26 @@
+/* ═══════════════════════════════════════════════════════════════════
+   カラーパレット定義 (CSSカスタムプロパティ)
+   アプリ全体の色を統一的に管理。森・空・太陽・ゆかり配色
+   ═══════════════════════════════════════════════════════════════════ */
 :root {
-    --forest-dark: #173f35;
-    --forest: #236b4e;
-    --forest-light: #e7f2eb;
-    --sky: #2f7590;
-    --sky-light: #e8f3f7;
-    --sun: #e8b44c;
-    --ink: #1f302a;
-    --muted: #60736b;
-    --line: #ccd9d2;
-    --paper: #ffffff;
-    --ground: #edf2ee;
-    --danger: #ad493d;
-    --danger-light: #fbecea;
+    --forest-dark: #173f35;      /* 濃い森色：見出しなどのメインカラー */
+    --forest: #236b4e;           /* 森色：プライマリボタンの色 */
+    --forest-light: #e7f2eb;     /* 薄い森色：選択肢の背景など */
+    --sky: #2f7590;              /* 空色：セカンダリカラー */
+    --sky-light: #e8f3f7;        /* 薄い空色：ガイダンスメッセージ背景 */
+    --sun: #e8b44c;              /* 太陽色：アクセント（下線、ボーダー） */
+    --ink: #1f302a;              /* 墨色：文字のメインカラー */
+    --muted: #60736b;            /* 淡い墨色：ヘルプテキストなど */
+    --line: #ccd9d2;             /* 薄い線色：境界線やボーダー */
+    --paper: #ffffff;            /* 白：背景（カード、ボタン） */
+    --ground: #edf2ee;           /* 薄い緑：ページ全体の背景 */
+    --danger: #ad493d;           /* 危険色（赤）：中断、エラー表示 */
+    --danger-light: #fbecea;     /* 薄い危険色：危険表示の背景 */
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   グローバルスタイル
+   ═══════════════════════════════════════════════════════════════════ */
 * {
     box-sizing: border-box;
 }
@@ -22,6 +29,7 @@ body {
     margin: 0;
     font-family: "Yu Gothic", "Meiryo", sans-serif;
     background-color: var(--ground);
+    /* 山の背景画像を薄くオーバーレイ */
     background-image:
         linear-gradient(rgba(237, 242, 238, 0.45), rgba(237, 242, 238, 0.62)),
         url("../images/mountain-bg.jpg");
@@ -31,6 +39,7 @@ body {
     color: var(--ink);
 }
 
+/* ページ上部に装飾用の太いボーダーを追加 */
 body::before {
     content: "";
     display: block;
@@ -39,25 +48,31 @@ body::before {
     border-bottom: 4px solid var(--sun);
 }
 
+/* ボタンと選択肢要素がシステムフォントを継承するように統一 */
 button,
 select {
     font: inherit;
 }
 
+/* ボタン・選択肢・山カードにホバーアニメーションを設定 */
 button,
 select,
 .mountain-card {
     transition: border-color 0.2s, background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
+/* フォーカス時のアウトライン（キーボード操作対応） */
 button:focus-visible,
 select:focus-visible {
     outline: 3px solid rgba(47, 117, 144, 0.3);
     outline-offset: 2px;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   レイアウト
+   ═══════════════════════════════════════════════════════════════════ */
 .app {
-    min-height: calc(100vh - 14px);
+    min-height: calc(100vh - 14px);  /* ページ全体を画面高さにフィット */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -65,17 +80,22 @@ select:focus-visible {
 }
 
 .quiz-area {
+    /* メインコンテナ：最大幅960px、レスポンシブで100% */
     width: min(960px, 100%);
     overflow: hidden;
     padding: 38px 42px 42px;
     border: 1px solid var(--line);
-    border-top: 7px solid var(--forest);
+    border-top: 7px solid var(--forest);  /* 上部に森色のアクセント */
     border-radius: 8px;
     background: var(--paper);
     box-shadow: 0 18px 45px rgba(23, 63, 53, 0.12);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   ヘッダー・タイトル
+   ═══════════════════════════════════════════════════════════════════ */
 .label {
+    /* 「Yama Quiz」のラベル */
     margin: 0 0 5px;
     color: var(--sky);
     font-size: 13px;
@@ -85,6 +105,7 @@ select:focus-visible {
 }
 
 h1 {
+    /* 「登山クイズ」メインタイトル */
     margin: 0;
     color: var(--forest-dark);
     font-size: 34px;
@@ -92,6 +113,7 @@ h1 {
 }
 
 h1::after {
+    /* タイトル下の太陽色アンダーライン装飾 */
     content: "";
     display: block;
     width: 54px;
@@ -101,6 +123,7 @@ h1::after {
 }
 
 h2 {
+    /* 各画面のセクションタイトル */
     margin: 16px 0 24px;
     color: var(--forest-dark);
     font-size: 23px;
@@ -108,16 +131,23 @@ h2 {
 }
 
 #statusMessage {
+    /* 各画面でのステータスメッセージ（全画面共通） */
     margin: 18px 0 0;
     color: var(--muted);
     line-height: 1.7;
 }
 
 .hidden {
+    /* 表示・非表示を制御 */
     display: none !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   【メニュー画面】スタイル
+   カテゴリ・難易度・出題数を選択する画面
+   ═══════════════════════════════════════════════════════════════════ */
 .menu-box {
+    /* 3列グリッドレイアウト（カテゴリ・難易度・出題数） */
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 22px 18px;
@@ -127,6 +157,7 @@ h2 {
 }
 
 .setting-group {
+    /* 各設定項目（ラベル＋セレクトボックス） */
     display: grid;
     gap: 9px;
 }
@@ -138,6 +169,7 @@ h2 {
 }
 
 .setting-group select {
+    /* セレクトボックスのスタイル */
     width: 100%;
     min-height: 48px;
     padding: 10px 38px 10px 13px;
@@ -149,16 +181,19 @@ h2 {
 }
 
 .setting-group select:hover {
+    /* ホバー時は空色に変更 */
     border-color: var(--sky);
     background: var(--sky-light);
 }
 
 .menu-message,
 .menu-actions {
+    /* メッセージとボタン群を最下段に配置 */
     grid-column: 1 / -1;
 }
 
 .menu-message {
+    /* ガイダンスメッセージ */
     min-height: 24px;
     margin: 0;
     padding: 11px 13px;
@@ -170,14 +205,20 @@ h2 {
 }
 
 .menu-actions {
+    /* ボタングループ：「開始」「ランダム」など */
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   ボタンスタイル共通
+   プライマリ（森色）・セカンダリ（空色）・危険（赤色）の3種類
+   ═══════════════════════════════════════════════════════════════════ */
 .primary-button,
 .secondary-button,
 .danger-button {
+    /* 共通ボタンサイズ */
     min-height: 46px;
     padding: 11px 20px;
     border-radius: 6px;
@@ -186,6 +227,7 @@ h2 {
 }
 
 .primary-button {
+    /* プライマリボタン：森色（「開始」ボタンなど） */
     border: 1px solid var(--forest);
     background: var(--forest);
     color: #ffffff;
@@ -199,6 +241,7 @@ h2 {
 }
 
 .primary-button:disabled {
+    /* 条件未満足時は無効状態 */
     border-color: #a9b5ae;
     background: #a9b5ae;
     box-shadow: none;
@@ -207,6 +250,7 @@ h2 {
 }
 
 .secondary-button {
+    /* セカンダリボタン：空色（「ランダム」ボタンなど） */
     border: 1px solid var(--sky);
     background: var(--paper);
     color: #285f74;
@@ -219,6 +263,7 @@ h2 {
 }
 
 .danger-button {
+    /* 危険ボタン：赤色（中断確認など） */
     border: 1px solid var(--danger);
     background: var(--paper);
     color: var(--danger);
@@ -229,6 +274,10 @@ h2 {
     background: var(--danger-light);
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   【クイズ画面】スタイル
+   問題・選択肢・正誤判定・解説を表示する画面
+   ═══════════════════════════════════════════════════════════════════ */
 .quiz-box {
     margin-top: 30px;
     padding-top: 24px;
@@ -236,6 +285,7 @@ h2 {
 }
 
 .quiz-toolbar {
+    /* クイズ画面上部：進捗表示と中断ボタン */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -246,6 +296,7 @@ h2 {
 }
 
 .progress-text {
+    /* 進捗表示：「X問目 / 全Y問 ｜ 正解 Z問」 */
     margin: 0;
     color: var(--sky);
     font-size: 14px;
@@ -253,6 +304,7 @@ h2 {
 }
 
 .interrupt-button {
+    /* 中断ボタン */
     flex-shrink: 0;
     padding: 7px 10px;
     border: 1px solid #c98178;
@@ -264,6 +316,7 @@ h2 {
 }
 
 .category {
+    /* カテゴリ・難易度表示タグ */
     display: inline-block;
     margin: 0;
     padding: 6px 10px;
@@ -275,12 +328,14 @@ h2 {
 }
 
 .choices {
+    /* 選択肢を2列グリッドで配置 */
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
 }
 
 .choice-button {
+    /* 選択肢ボタン */
     width: 100%;
     min-height: 58px;
     padding: 14px 16px;
@@ -308,6 +363,7 @@ h2 {
 }
 
 .choice-button.correct {
+    /* 正解ボタン：森色で強調 */
     border-color: #61a37b;
     border-left-color: var(--forest);
     background: var(--forest-light);
@@ -316,6 +372,7 @@ h2 {
 }
 
 .choice-button.incorrect {
+    /* 不正解ボタン：赤色で強調 */
     border-color: #d69389;
     border-left-color: var(--danger);
     background: var(--danger-light);
@@ -323,6 +380,7 @@ h2 {
 }
 
 .result {
+    /* 「正解です！」「不正解です。」メッセージ */
     margin: 22px 0 8px;
     color: var(--forest-dark);
     font-size: 18px;
@@ -330,6 +388,7 @@ h2 {
 }
 
 .explanation {
+    /* 問題の解説テキスト */
     margin: 0 0 24px;
     padding: 14px 16px;
     border-left: 4px solid var(--sun);
@@ -338,8 +397,12 @@ h2 {
     line-height: 1.8;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   【中断確認画面・結果画面】スタイル
+   ═══════════════════════════════════════════════════════════════════ */
 .interrupt-box,
 .result-box {
+    /* 両画面共通のレイアウト */
     margin-top: 30px;
     padding-top: 18px;
     border-top: 1px solid var(--line);
@@ -348,10 +411,16 @@ h2 {
 
 .interrupt-box .menu-actions,
 .result-box .menu-actions {
+    /* ボタングループを中央配置 */
     justify-content: center;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   【結果画面】スタイル
+   最終スコア・おすすめ山・ボタンを表示する画面
+   ═══════════════════════════════════════════════════════════════════ */
 .final-score {
+    /* 「X問中 Y問正解！」のスコア表示 */
     margin: 10px 0;
     color: var(--forest-dark);
     font-size: 30px;
@@ -359,6 +428,7 @@ h2 {
 }
 
 .recommendation-text {
+    /* 「○○におすすめの山」テキスト */
     margin: 0 0 20px;
     color: var(--sky);
     font-weight: bold;
@@ -366,12 +436,14 @@ h2 {
 }
 
 .mountain-slider {
+    /* おすすめ山カードの横スクロールコンテナ */
     width: 100%;
     overflow: hidden;
     padding: 12px 0 18px;
 }
 
 .mountain-track {
+    /* 山カードを横に並べ、自動スクロールアニメーション */
     display: flex;
     gap: 14px;
     width: max-content;
@@ -379,10 +451,12 @@ h2 {
 }
 
 .mountain-slider:hover .mountain-track {
+    /* ホバー時はアニメーション停止 */
     animation-play-state: paused;
 }
 
 .mountain-card {
+    /* 山カード：推奨ルート情報を表示 */
     width: 250px;
     min-height: 178px;
     flex-shrink: 0;
@@ -402,12 +476,14 @@ h2 {
 }
 
 .mountain-card h3 {
+    /* 山の名前 */
     margin: 0 0 7px;
     color: var(--forest-dark);
     font-size: 20px;
 }
 
 .mountain-meta {
+    /* 都道府県・標高情報 */
     margin: 0 0 11px;
     color: var(--sky);
     font-size: 13px;
@@ -415,6 +491,7 @@ h2 {
 }
 
 .mountain-description {
+    /* 山の説明テキスト */
     margin: 0;
     color: #43564d;
     font-size: 14px;
@@ -422,23 +499,29 @@ h2 {
 }
 
 .mountain-notice {
+    /* 「このおすすめは参考です」注記 */
     margin: 0 0 24px;
     color: var(--muted);
     font-size: 12px;
     line-height: 1.7;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   アニメーション
+   ═══════════════════════════════════════════════════════════════════ */
 @keyframes mountain-scroll {
+    /* おすすめ山カードの無限横スクロール（左流し） */
     from {
         transform: translateX(0);
     }
 
     to {
-        transform: translateX(calc(-50% - 7px));
+        transform: translateX(calc(-50% - 7px));  /* -50%で1周分、-7pxはgap分 */
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    /* システム設定でアニメーション削減が有効な場合 */
     button,
     select,
     .mountain-card {
@@ -450,14 +533,18 @@ h2 {
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   レスポンシブデザイン（タブレット・スマートフォン対応）
+   ═══════════════════════════════════════════════════════════════════ */
 @media (max-width: 760px) {
+    /* タブレット以下のサイズ */
     body {
         background-position: 24% center;
-        background-attachment: scroll;
+        background-attachment: scroll;  /* タブレットではスクロール時に背景固定を外す */
     }
 
     .app {
-        align-items: flex-start;
+        align-items: flex-start;  /* 画面上部から配置 */
         padding: 22px 14px;
     }
 
@@ -467,20 +554,23 @@ h2 {
 
     .menu-box,
     .choices {
+        /* 3列→1列、2列→1列に変更 */
         grid-template-columns: 1fr;
     }
 
     .quiz-toolbar {
+        /* 横並び→縦積み */
         align-items: flex-start;
         flex-direction: column;
     }
 
     .mountain-card {
-        width: 220px;
+        width: 220px;  /* カードサイズを縮小 */
     }
 }
 
 @media (max-width: 520px) {
+    /* スマートフォン対応 */
     h1 {
         font-size: 28px;
     }
@@ -493,10 +583,11 @@ h2 {
     .primary-button,
     .secondary-button,
     .danger-button {
-        width: 100%;
+        width: 100%;  /* ボタンを全幅に */
     }
 
     .interrupt-button {
-        width: 100%;
+        width: 100%;  /* 中断ボタンも全幅に */
     }
 }
+
