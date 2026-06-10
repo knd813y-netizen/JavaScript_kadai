@@ -15,32 +15,58 @@ let weightedMaxScore = 0;
 let lastQuizSettings = null;
 
 // indexからidの要素を取得し変数に入れ込む
-const statusMessage = document.getElementById("statusMessage"); // 状態メッセージ表示 (全画面共通)
-const menuBox = document.getElementById("menuBox"); // メニュー画面のコンテナ
-const categorySelect = document.getElementById("categorySelect"); // メニュー画面 - カテゴリ選択ドロップダウン
-const difficultySelect = document.getElementById("difficultySelect"); // メニュー画面 - 難易度選択ドロップダウン
-const questionCountSelect = document.getElementById("questionCountSelect"); // メニュー画面 - 出題数選択ドロップダウン
-const menuMessage = document.getElementById("menuMessage"); // メニュー画面 - ガイダンスメッセージ表示
-const startButton = document.getElementById("startButton"); // メニュー画面 - 「開始」ボタン
-const randomButton = document.getElementById("randomButton"); // メニュー画面 - 「ランダムで開始」ボタン
-const quizBox = document.getElementById("quizBox"); // クイズ画面のコンテナ
-const progressText = document.getElementById("progressText"); // クイズ画面 - 進捗表示 (X問目 / 全Y問)
-const interruptButton = document.getElementById("interruptButton"); // クイズ画面 - 「中断」ボタン
-const categoryText = document.getElementById("categoryText"); // クイズ画面 - カテゴリ・難易度表示
-const questionText = document.getElementById("questionText"); // クイズ画面 - 問題文表示
-const choices = document.getElementById("choices"); // クイズ画面 - 選択肢ボタン群のコンテナ
-const resultText = document.getElementById("resultText"); // クイズ画面 - 正解・不正解表示
-const explanationText = document.getElementById("explanationText"); // クイズ画面 - 解説表示
-const nextButton = document.getElementById("nextButton"); // クイズ画面 - 「次へ」ボタン
-const interruptBox = document.getElementById("interruptBox"); // 中断確認画面のコンテナ
-const continueButton = document.getElementById("continueButton"); // 中断確認画面 - 「続ける」ボタン
-const confirmInterruptButton = document.getElementById("confirmInterruptButton"); // 中断確認画面 - 「中断する」ボタン
-const resultBox = document.getElementById("resultBox"); // 結果画面のコンテナ
-const finalScoreText = document.getElementById("finalScoreText"); // 結果画面 - 最終スコア表示
-const recommendationText = document.getElementById("recommendationText"); // 結果画面 - おすすめ山の説明テキスト
-const mountainTrack = document.getElementById("mountainTrack"); // 結果画面 - おすすめ山カード表示エリア (横スクロール)
-const retryButton = document.getElementById("retryButton"); // 結果画面 - 「同じ条件で再挑戦」ボタン
-const menuButton = document.getElementById("menuButton"); // 結果画面 - 「メニューに戻る」ボタン
+// 画面上部に現在の状態や案内を表示する文章
+const statusMessage = document.getElementById("statusMessage");
+// カテゴリ・難易度・出題数を選択するメニュー画面
+const menuBox = document.getElementById("menuBox");
+// 出題するカテゴリを選択する欄
+const categorySelect = document.getElementById("categorySelect");
+// 出題する難易度を選択する欄
+const difficultySelect = document.getElementById("difficultySelect");
+// 出題する問題数を選択する欄
+const questionCountSelect = document.getElementById("questionCountSelect");
+// 選択状態などをメニュー画面に表示する文章
+const menuMessage = document.getElementById("menuMessage");
+// 選択した条件でクイズを開始するボタン
+const startButton = document.getElementById("startButton");
+// 全カテゴリ・全難易度からクイズを開始するボタン
+const randomButton = document.getElementById("randomButton");
+// 問題文や選択肢を表示するクイズ回答画面
+const quizBox = document.getElementById("quizBox");
+// 現在の問題数と正解数を表示する文章
+const progressText = document.getElementById("progressText");
+// クイズの中断確認画面を表示するボタン
+const interruptButton = document.getElementById("interruptButton");
+// 現在の問題のカテゴリと難易度を表示する文章
+const categoryText = document.getElementById("categoryText");
+// 現在の問題文を表示する文章
+const questionText = document.getElementById("questionText");
+// 4つの回答選択肢を表示する場所
+const choices = document.getElementById("choices");
+// 回答後に正解・不正解を表示する文章
+const resultText = document.getElementById("resultText");
+// 回答後に問題の解説を表示する文章
+const explanationText = document.getElementById("explanationText");
+// 次の問題または結果画面へ進むボタン
+const nextButton = document.getElementById("nextButton");
+// クイズを続けるか中断するか確認する画面
+const interruptBox = document.getElementById("interruptBox");
+// 中断せずクイズ回答画面へ戻るボタン
+const continueButton = document.getElementById("continueButton");
+// クイズの中断を確定してメニューへ戻るボタン
+const confirmInterruptButton = document.getElementById("confirmInterruptButton");
+// 正解数やおすすめの山を表示する結果画面
+const resultBox = document.getElementById("resultBox");
+// 最終的な正解数を表示する文章
+const finalScoreText = document.getElementById("finalScoreText");
+// おすすめ判定の結果を表示する文章
+const recommendationText = document.getElementById("recommendationText");
+// おすすめの山カードを並べる場所
+const mountainTrack = document.getElementById("mountainTrack");
+// 前回と同じ条件でもう一度クイズを開始するボタン
+const retryButton = document.getElementById("retryButton");
+// 結果画面からメニュー画面へ戻るボタン
+const menuButton = document.getElementById("menuButton");
 
 // 問題データとおすすめの山データを読み込み、メニューを表示する
 async function loadData() {
@@ -75,21 +101,36 @@ async function loadData() {
 
 // メニュー画面を表示する
 function showMenu() {
+    // カテゴリ・難易度・出題数を選ぶメニュー画面を表示する
     menuBox.classList.remove("hidden");
+
+    // 問題文や選択肢を表示するクイズ回答画面を非表示にする
     quizBox.classList.add("hidden");
+
+    // クイズを続けるか中断するか確認する画面を非表示にする
     interruptBox.classList.add("hidden");
+
+    // 正解数やおすすめの山を表示する結果画面を非表示にする
     resultBox.classList.add("hidden");
+
+    // メニュー画面上部の案内メッセージを設定する
     statusMessage.textContent = "出題条件を選んでクイズを開始してください。";
+
+    // 現在の選択状態を確認し、開始ボタンを押せるか判定する
     validateSelections();
 }
 
 // カテゴリと難易度が両方選択されているか確認する
 function validateSelections() {
+    // 選択しているvalueが空じゃないかどうか判定
     const categoryIsSelected = categorySelect.value !== "";
     const difficultyIsSelected = difficultySelect.value !== "";
 
+    // カテゴリと難易度が選択されていれば開始ボタンを押せるようになる
     startButton.disabled = !(categoryIsSelected && difficultyIsSelected);
 
+    // もし両方選択されていればifの文をテキストに表示
+    // elseの場合、選択を促すテキストを表示
     if (categoryIsSelected && difficultyIsSelected) {
         menuMessage.textContent = "選択した条件で開始できます。";
     } else {
@@ -400,16 +441,19 @@ function showResult() {
 }
 
 // カテゴリまたは難易度が変更された時に選択状態を確認する
+// カテゴリ
 categorySelect.addEventListener("change", function() {
     validateSelections();
 });
-
+// 難易度
 difficultySelect.addEventListener("change", function() {
     validateSelections();
 });
 
 // 選択した条件で開始するボタンを押した時の処理
 startButton.addEventListener("click", function() {
+    // startQuizメソッドに
+    // 回答者が選択したカテゴリ、難易度、問題数を引数にして渡す
     startQuiz({
         category: categorySelect.value,
         difficulty: difficultySelect.value,
